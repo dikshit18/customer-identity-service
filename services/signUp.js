@@ -10,8 +10,7 @@ const moment = require('moment');
 const signUp = async (req, res) => {
   try {
     await validateSchema(req.body, schema.signUpSchema);
-    const {email, firstName, lastName} = req.body;
-    const password = await generateRandomPassword();
+    const {email, firstName, lastName, password} = req.body;
     if (await checkIfUserExists(email)) {
       const response = errorCodes['userAlreadyExists'];
       return res.status(response.statusCode).send({
@@ -20,7 +19,7 @@ const signUp = async (req, res) => {
       });
     }
     const cognitoSignUp = await cognito.signUp(email, password);
-    await addStaffDetails(firstName, lastName, email, cognitoSignUp.UserSub);
+    await addCustomerDetails(firstName, lastName, email, cognitoSignUp.UserSub);
     const response = successCodes['signUpSuccess'];
     return res.status(response.statusCode).send({
       statusCode: response.statusCode,
@@ -57,7 +56,7 @@ const checkIfUserExists = async email => {
     return true;
   } else return false;
 };
-const addStaffDetails = async (firstName, lastName, email, sub) => {
+const addCustomerDetails = async (firstName, lastName, email, sub) => {
   const params = {
     TableName: process.env.CUSTOMER_IDENTITY_TABLE,
     Item: {

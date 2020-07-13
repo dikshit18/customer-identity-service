@@ -9,7 +9,8 @@ const schema = (() => {
           .email()
           .required(),
         firstName: Joi.string().required(),
-        lastName: Joi.string().required()
+        lastName: Joi.string().required(),
+        password: Joi.string().required()
       })
       .unknown(false),
 
